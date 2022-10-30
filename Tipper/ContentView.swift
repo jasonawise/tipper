@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ContentView: View {
-  @State private var selected = 1
+  @State private var selected = 0
   @State private var billAmount: Double = 0.0
   @State private var totalBillAmount: Double = 0.0
   // may be able to move this to the caculateBillTotal func
@@ -16,35 +16,51 @@ struct ContentView: View {
   @State var tipAmount: Double = 0.0
   
   var body: some View {
-    VStack {
-      HStack {
-        Picker(selection: $selected, label: Text("Tip Percent")) {
-          Text("10%").tag(1)
-          Text("20%").tag(2)
-          Text("25%").tag(3)
+    NavigationView {
+      VStack {
+        HStack {
+          Section {
+            TextField("Bill Amount", value: $billAmount, format: .currency(code: Locale.current.currency?.identifier ?? "USD"))
+              .keyboardType(.decimalPad)
+          } header: {
+            Text("Bill Amount: ")
+          }
         }
-        .pickerStyle(.segmented)
-      }
-      HStack {
-        Section {
-          TextField("Bill Amount", value: $billAmount, format: .currency(code: Locale.current.currency?.identifier ?? "USD"))
-            .keyboardType(.decimalPad)
-          Button("Calculate Tip", action: calculateTipTotal)
-            .buttonStyle(.bordered)
-        } header: {
-          Text("Bill Amount: ")
+        .navigationTitle("Tipper")
+        HStack {
+          Picker(selection: $selected, label: Text("Tip Percent")) {
+            Text("10%").tag(1)
+            Text("20%").tag(2)
+            Text("25%").tag(3)
+          }
+          .onChange(of: selected, perform: { _ in
+            calculateTipTotal()
+            calculateBillTotal()
+          })
+          .pickerStyle(.segmented)
         }
-      }
-      HStack {
-        Section {
-          Text(tipAmount, format: .currency(code: Locale.current.currency?.identifier ?? "USD"))
-            .padding()
-        } header: {
-          Text("Sugguested Tip: ")
+        HStack {
+          Section {
+            Text(tipAmount, format: .currency(code: Locale.current.currency?.identifier ?? "USD"))
+              .padding()
+              .foregroundColor(.gray)
+          } header: {
+            Text("Sugguested Tip: ")
+          }
         }
+        HStack {
+          Section {
+            Text(totalBillAmount, format: .currency(code: Locale.current.currency?.identifier ?? "USD"))
+              .padding()
+          } header: {
+            Text("Amount you owe: ")
+          }
+        }
+        Spacer()
       }
+      .padding()
     }
-    .padding()
+    
   }
   
   func calculateTipTotal() {
@@ -62,6 +78,13 @@ struct ContentView: View {
     
     return tipAmount = tipTotal
   }
+  
+  func calculateBillTotal() {
+    let tip = tipAmount
+    let bill = billAmount
+    return totalBillAmount = bill + tip
+  }
+
 }
 
 struct ContentView_Previews: PreviewProvider {
