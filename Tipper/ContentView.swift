@@ -15,7 +15,7 @@ struct ContentView: View {
   
   var body: some View {
     NavigationView {
-      VStack {
+      VStack (alignment: .leading) {
         HStack {
           Section {
             TextField("Bill Amount", value: $billAmount, format: .currency(code: Locale.current.currency?.identifier ?? "USD"))
@@ -27,6 +27,10 @@ struct ContentView: View {
           .padding(.bottom)
         }
         .navigationTitle("Tipper")
+        VStack  {
+          Text("Pick a tip percent")
+            .fontWeight(.light)
+        }
         HStack {
           Picker(selection: $selected, label: Text("Tip Percent")) {
             Text("10%").tag(1)
