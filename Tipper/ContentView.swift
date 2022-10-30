@@ -11,8 +11,6 @@ struct ContentView: View {
   @State private var selected = 0
   @State private var billAmount: Double = 0.0
   @State private var totalBillAmount: Double = 0.0
-  // may be able to move this to the caculateBillTotal func
-  @State var tipPercent: Double = 0.0
   @State var tipAmount: Double = 0.0
   
   var body: some View {
@@ -24,7 +22,9 @@ struct ContentView: View {
               .keyboardType(.decimalPad)
           } header: {
             Text("Bill Amount: ")
+              .font(.title)
           }
+          .padding(.bottom)
         }
         .navigationTitle("Tipper")
         HStack {
@@ -52,8 +52,10 @@ struct ContentView: View {
           Section {
             Text(totalBillAmount, format: .currency(code: Locale.current.currency?.identifier ?? "USD"))
               .padding()
+              .foregroundColor(.gray)
           } header: {
             Text("Amount you owe: ")
+              .font(.headline)
           }
         }
         Spacer()
@@ -64,6 +66,7 @@ struct ContentView: View {
   }
   
   func calculateTipTotal() {
+    var tipPercent = 0.0
     switch selected {
     case 1:
       tipPercent = 0.10
